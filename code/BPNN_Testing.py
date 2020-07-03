@@ -11,7 +11,6 @@ dim_2_BPNN = 4
 num_tiles_BPNN = dim_1_BPNN*dim_2_BPNN
 
 # set the training and testing rounds
-num_train_rounds = 100000
 num_test_rounds = 1000
 
 # calculate the number of input neurons = (# of tile) * (# of possiblities) + 1
@@ -62,9 +61,9 @@ fo_4.close()
 # test the model
 num_succ = 0
 for round in range(num_test_rounds):
-    dim_1 = 8
-    dim_2 = 8
-    num_mines = 10   
+    dim_1 = 5
+    dim_2 = 5
+    num_mines = 3
     # create a Minesweeper game
     game = MineSweeper(dim_1, dim_2, num_mines)
     # start from the left-top tile

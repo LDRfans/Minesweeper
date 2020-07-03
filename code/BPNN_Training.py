@@ -6,12 +6,12 @@ from MineSweeper import MineSweeper
 from BP_Neural_Network import Neural_Network
 
 # set the attributes of the game
-dim_1 = 4
-dim_2 = 4
-num_mines = 3
+dim_1 = 8
+dim_2 = 8
+num_mines = 10
 
 # set the training and testing rounds
-num_train_rounds = 100000
+num_train_rounds = 1000
 num_test_rounds = 1000
 
 # count the number of uncovered tiles
@@ -26,14 +26,12 @@ hidden_size = int(np.sqrt((output_size+2)*input_size)+2*np.sqrt(input_size/(outp
 # create a BPNN  
 BPNN = Neural_Network(input_size, hidden_size, output_size)
 
-
-valid_tiles = []
 num_trainng_succ = 0
 # train the model
 for round in range(num_train_rounds):
-    num_mines = np.random.randint(2,4)
-    if(round%1000==0):
-        print(round,num_trainng_succ/1000)
+    # num_mines = np.random.randint(2,4)
+    if(round%100==0):
+        print(round,num_trainng_succ/100)
         num_trainng_succ = 0
     # create a minesweeper
     game = MineSweeper(dim_1, dim_2, num_mines)
@@ -42,13 +40,11 @@ for round in range(num_train_rounds):
     while not game.gameOver:
         # reset the input layer of BPNN
         BPNN.input = np.zeros(input_size)
-        valid_tiles = []
         # traverse game state to get the input layer
         for i in range(game.dim1):
             for j in range(game.dim2):
                 if np.isnan(game.state[i,j]):
                     BPNN.input[(i*game.dim2+j)*10+9] = 1
-                    valid_tiles.append([i,j])
                 else:
                     BPNN.input[int((i*game.dim2+j)*10+game.state[i,j])] = 1
                     count -= 1
@@ -85,31 +81,31 @@ for round in range(num_train_rounds):
         # game.selectCell(random.choice(valid_tiles))
     if game.victory:
         num_trainng_succ += 1
+print(num_trainng_succ)
+# fo_0 = open("attributes.txt", "w")
+# fo_0.write(str(num_train_rounds)+" "+str(num_test_rounds)+" ")
+# fo_0.close()
 
-fo_0 = open("arrtributes.txt", "w")
-fo_0.write(str(num_train_rounds)+" "+str(num_test_rounds)+" ")
-fo_0.close()
+# fo_1 = open("temp_weights_in_h.txt", "w")
+# for i in BPNN.weights_in_h:
+#     for j in i:
+#         fo_1.write(str(j)+" ")
+# fo_1.close()
 
-fo_1 = open("weights_in_h.txt", "w")
-for i in BPNN.weights_in_h:
-    for j in i:
-        fo_1.write(str(j)+" ")
-fo_1.close()
+# fo_2 = open("temp_weights_h_out.txt", "w")
+# for i in BPNN.weights_h_out:
+#     for j in i:
+#         fo_2.write(str(j)+" ")
+# fo_2.close()
 
-fo_2 = open("weights_h_out.txt", "w")
-for i in BPNN.weights_h_out:
-    for j in i:
-        fo_2.write(str(j)+" ")
-fo_2.close()
+# fo_3 = open("temp_bias_in_h.txt", "w")
+# # fo_3.write("bias_in_h:\n")
+# for i in BPNN.bias_in_h:
+#     fo_3.write(str(i)+" ")
+# fo_3.close()
 
-fo_3 = open("bias_in_h.txt", "w")
-# fo_3.write("bias_in_h:\n")
-for i in BPNN.bias_in_h:
-    fo_3.write(str(i)+" ")
-fo_3.close()
-
-fo_4 = open("bias_h_out.txt", "w")
-# fo_4.write("bias_h_out")
-for i in BPNN.bias_h_out:
-    fo_4.write(str(i)+" ")
-fo_4.close()
+# fo_4 = open("temp_bias_h_out.txt", "w")
+# # fo_4.write("bias_h_out")
+# for i in BPNN.bias_h_out:
+#     fo_4.write(str(i)+" ")
+# fo_4.close()
