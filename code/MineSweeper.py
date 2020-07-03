@@ -2,12 +2,12 @@ import numpy as np
 
 # the "game board", with state
 class MineSweeper:
-    def __init__(self):
+    def __init__(self, dim_1, dim_2, num_mines):
         # params
-        self.dim1 = 8
-        self.dim2 = 8
+        self.dim1 = dim_1
+        self.dim2 = dim_2
         self.totalCells = self.dim1 * self.dim2
-        self.nMines = 10
+        self.nMines = num_mines
         self.mines = np.zeros([self.dim1, self.dim2])
         self.neighbors = np.zeros([self.dim1, self.dim2])
         self.state = np.zeros([self.dim1, self.dim2])
