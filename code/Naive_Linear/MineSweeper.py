@@ -4,10 +4,10 @@ import numpy as np
 class MineSweeper:
     def __init__(self):
         # params
-        self.dim1 = 8
-        self.dim2 = 8
+        self.dim1 = 4
+        self.dim2 = 4
         self.totalCells = self.dim1 * self.dim2
-        self.nMines = 10
+        self.nMines = 3
         self.mines = np.zeros([self.dim1, self.dim2])
         self.neighbors = np.zeros([self.dim1, self.dim2])
         self.state = np.zeros([self.dim1, self.dim2])
