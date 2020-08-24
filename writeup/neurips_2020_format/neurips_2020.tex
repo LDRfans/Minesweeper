@@ -5,17 +5,17 @@
 % before loading neurips_2020
 
 % ready for submission
-% \usepackage{neurips_2020}
+%\usepackage{neurips_2020}
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
-%     \usepackage[preprint]{neurips_2020}
+    \usepackage[preprint]{neurips_2020}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-%     \usepackage[final]{neurips_2020}
+     %\usepackage[final]{neurips_2020}
 
 % to avoid loading the natbib package, add option nonatbib:
-     \usepackage[nonatbib]{neurips_2020}
+     %\usepackage[nonatbib]{neurips_2020}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -26,7 +26,17 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 
-\title{Formatting Instructions For NeurIPS 2020}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{graphics}
+\usepackage{epsfig}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}} % Use Input in the format of Algorithm
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm
+
+\title{Machine Learning Applications To Minesweeper Solver}
 
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -35,36 +45,35 @@
 % lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
 % authors names on the first line, and the last on the second line, try using
 % \AND instead of \And before the third author name.
-
-\author{%
-  David S.~Hippocampus\thanks{Use footnote for providing further information
-    about author (webpage, alternative address)---\emph{not} for acknowledging
-    funding agencies.} \\
-  Department of Computer Science\\
-  Cranberry-Lemon University\\
-  Pittsburgh, PA 15213 \\
-  \texttt{hippo@cs.cranberry-lemon.edu} \\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
+\author{
+	Li Derun\\
+	School of Science and Information\\
+	ShanghaiTech University\\
+	Pudong new area, Shanghai  \\
+	\texttt{lidr@shanghaitech.edu.cn} \\
+	% examples of more authors
+	\And
+	Zhang Cenyang \\
+	School of Science and Information \\
+	ShanghaiTech University\\
+	Pudong new area, Shanghai\\
+	\texttt{zhangcy1@shanghaitech.edu.cn}
+	\AND
+	Weng Yijie \\
+	School of Science and Information \\
+	ShanghaiTech University \\
+	Pudong new area, Shanghai\\
+	\texttt{wengyj@shanghaitech.edu.cn}
+	% \And
+	% Coauthor \\
+	% Affiliation \\
+	% Address \\
+	% \texttt{email} \\
+	% \And
+	% Coauthor \\
+	% Affiliation \\
+	% Address \\
+	% \texttt{email} \\
 }
 
 \begin{document}
@@ -72,342 +81,152 @@
 \maketitle
 
 \begin{abstract}
-  The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
-  both the left- and right-hand margins. Use 10~point type, with a vertical
-  spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
-  bold, and in point size 12. Two line spaces precede the abstract. The abstract
-  must be limited to one paragraph.
+  This project aims at training a minesweeper solver using machine learning knowledge learned in SI151. Three algorithm (linear classification, Q-learning and neural network) are designed, trained and tested, among which BPNN shows the best performance. To improve BPNN applying to larger game complexity, concept of convolution is used and results in a considerable winning rate improvement.\\
+  
+  \par\textbf{Keywords: } minesweeper; machine learning; neural network
 \end{abstract}
 
-\section{Submission of papers to NeurIPS 2020}
+\section{Introduction}
 
-NeurIPS requires electronic submissions.  The electronic submission site is
-\begin{center}
-  \url{https://cmt3.research.microsoft.com/NeurIPS2020/}
-\end{center}
 
-Please read the instructions below carefully and follow them faithfully.
 
-\subsection{Style}
+\subsection{Minesweeper game}
+Minesweeper is a popular game around the world developed by Microsoft in 1980s. Player can click the hidden squares to uncover them. If the clicked square is not a mine, it reveals an integer which denotes the number of adjacent tiles with mines. Players can deduce which squares contain mines according to the limited information, and when all squares without mines are uncovered, players win the game. 
 
-Papers to be submitted to NeurIPS 2020 must be prepared according to the
-instructions presented here. Papers may only be up to eight pages long,
-including figures. Additional pages \emph{containing only a section on the broader impact, acknowledgments and/or cited references} are allowed. Papers that exceed eight pages of content will not be reviewed, or in any other way considered for
-presentation at the conference.
+Minesweeper also hides in itself one of the most important problems of mathematics: whether P=NP. Moreover, it has been proved by Kanye, R (2000) that minesweeper is a NP-complete problem and belongs to a more difficult class of problems called sharping P-complete. Therefore, designing a minesweeper solver by conventional math algorithms could be complicated.
 
-The margins in 2020 are the same as those in 2007, which allow for $\sim$$15\%$
-more words in the paper compared to earlier years.
+\subsection{Minesweeper with machine learning}
+Consider that conventional algorithm of minesweeper solver could be complex, some approaches have been made to solve games using machine learning. In 2015, Luis Gardea, Griffin Koontz, Ryan Silva build two minesweeper solvers by supervised learning and simplified Q-learning. However, the win rate of solver drops sharply as the board size maximizes. In 2017, Jacob J.Hasen et.al compared Q-learning with other two algorithms. Moreover, there are also some people trying to solve minesweeper by convolutional neural network and getting relatively good results.
 
-Authors are required to use the NeurIPS \LaTeX{} style files obtainable at the
-NeurIPS website as indicated below. Please make sure you use the current files
-and not previous versions. Tweaking the style files may be grounds for
-rejection.
 
-\subsection{Retrieval of style files}
+\section{Methodology and Experiment}
+After discussion and comparison, three types of algorithm come up, which are linear classification, Q-like learning(based on reinforcement learning) and back propagation neural network. A simple minesweeper model is used instead of professional minesweeper game to simulate game state from reference[3].
+\subsection{Naive linear classification}
+\subsubsection{Algorithm}
+First, we build a simple solver by naive linear classification. This algorithm holds an assumption that covered squares could be classified by a linear model. Input $X$ indicates states of the 8 neighbors to the considered square and the output $Y$ is a variable indicating its probability to be a mine. The output is effected locally by the numbers shown at its neighbors. Linear assumption gives the expression of estimator by $\hat{y}=x^Tw$. When trainning the model, we estimate probabilities of every unrevealed tile to be a mine, and choose one with the least probability to unreveal. If unrevaling a mine, increase more relative coefficients and decrease others. After initializing coefficients by random normal distribution, they are updated as training game continues. The algorithm is shown as below:
 
-The style files for NeurIPS and other conference information are available on
-the World Wide Web at
-\begin{center}
-  \url{http://www.neurips.cc/}
-\end{center}
-The file \verb+neurips_2020.pdf+ contains these instructions and illustrates the
-various formatting requirements your NeurIPS paper must satisfy.
+\begin{algorithm}[htb] 
+	\caption{Naive classification} 
+	\label{alg:naive_classification} 
+	\begin{algorithmic}[1]
+		\Require $X^T = [x_1,x_2,\cdots,x_8]$ (eight neighbors),
+			with $x_i = \{-1,1,2,\cdots,8\}$(-1 for unrevealed tiles).
+		\Ensure category $G = \{0,1\}.$(0 for safe and 1 for a mine)\vspace{0.1in}
+		\State Assume $X \leftarrow \begin{bmatrix} 1 \\ X \end{bmatrix}$, $\mathbf{w}^T = [w_0,w_1,\cdots,w_8]$
+		\State Begin by probing a corner square
+		\While {$w_i$ not converge}
+		\While {not game over }
+			\For {tile on board}
+				\State probability $y$ $\leftarrow \mathbf{w}^TX$
+			\EndFor
+		\State Unreveal the tile with minimum y
+		\EndWhile
+		\State $w_i \leftarrow w_i + \frac{1}{1+\exp(-x)}*(1-\frac{1}{1+\exp(-x)})$
+		\EndWhile
+	\end{algorithmic} 
+\end{algorithm}
+\subsubsection{Result}
+Although its win rate is larger than random choose, the result of naive linear classification is extremely poor and weights can hardly converge. Considering that the assumption of algorithm (the state of squares could be linear separate) is really robust, it is reasonable that the performance is really bad.
 
-The only supported style file for NeurIPS 2020 is \verb+neurips_2020.sty+,
-rewritten for \LaTeXe{}.  \textbf{Previous style files for \LaTeX{} 2.09,
-  Microsoft Word, and RTF are no longer supported!}
 
-The \LaTeX{} style file contains three optional arguments: \verb+final+, which
-creates a camera-ready copy, \verb+preprint+, which creates a preprint for
-submission to, e.g., arXiv, and \verb+nonatbib+, which will not load the
-\verb+natbib+ package for you in case of package clash.
-
-\paragraph{Preprint option}
-If you wish to post a preprint of your work online, e.g., on arXiv, using the
-NeurIPS style, please use the \verb+preprint+ option. This will create a
-nonanonymized version of your work with the text ``Preprint. Work in progress.''
-in the footer. This version may be distributed as you see fit. Please \textbf{do
-  not} use the \verb+final+ option, which should \textbf{only} be used for
-papers accepted to NeurIPS.
-
-At submission time, please omit the \verb+final+ and \verb+preprint+
-options. This will anonymize your submission and add line numbers to aid
-review. Please do \emph{not} refer to these line numbers in your paper as they
-will be removed during generation of camera-ready copies.
-
-The file \verb+neurips_2020.tex+ may be used as a ``shell'' for writing your
-paper. All you have to do is replace the author, title, abstract, and text of
-the paper with your own.
-
-The formatting instructions contained in these style files are summarized in
-Sections \ref{gen_inst}, \ref{headings}, and \ref{others} below.
-
-\section{General formatting instructions}
-\label{gen_inst}
-
-The text must be confined within a rectangle 5.5~inches (33~picas) wide and
-9~inches (54~picas) long. The left margin is 1.5~inch (9~picas).  Use 10~point
-type with a vertical spacing (leading) of 11~points.  Times New Roman is the
-preferred typeface throughout, and will be selected for you by default.
-Paragraphs are separated by \nicefrac{1}{2}~line space (5.5 points), with no
-indentation.
-
-The paper title should be 17~point, initial caps/lower case, bold, centered
-between two horizontal rules. The top rule should be 4~points thick and the
-bottom rule should be 1~point thick. Allow \nicefrac{1}{4}~inch space above and
-below the title to rules. All pages should start at 1~inch (6~picas) from the
-top of the page.
-
-For the final version, authors' names are set in boldface, and each name is
-centered above the corresponding address. The lead author's name is to be listed
-first (left-most), and the co-authors' names (if different address) are set to
-follow. If there is only one co-author, list both author and co-author side by
-side.
-
-Please pay special attention to the instructions in Section \ref{others}
-regarding figures, tables, acknowledgments, and references.
-
-\section{Headings: first level}
-\label{headings}
-
-All headings should be lower case (except for first word and proper nouns),
-flush left, and bold.
-
-First-level headings should be in 12-point type.
-
-\subsection{Headings: second level}
-
-Second-level headings should be in 10-point type.
-
-\subsubsection{Headings: third level}
-
-Third-level headings should be in 10-point type.
-
-\paragraph{Paragraphs}
-
-There is also a \verb+\paragraph+ command available, which sets the heading in
-bold, flush left, and inline with the text, with the heading followed by 1\,em
-of space.
-
-\section{Citations, figures, tables, references}
-\label{others}
-
-These instructions apply to everyone.
-
-\subsection{Citations within the text}
-
-The \verb+natbib+ package will be loaded for you by default.  Citations may be
-author/year or numeric, as long as you maintain internal consistency.  As to the
-format of the references themselves, any style is acceptable as long as it is
-used consistently.
-
-The documentation for \verb+natbib+ may be found at
-\begin{center}
-  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-Of note is the command \verb+\citet+, which produces citations appropriate for
-use in inline text.  For example,
-\begin{verbatim}
-   \citet{hasselmo} investigated\dots
-\end{verbatim}
-produces
-\begin{quote}
-  Hasselmo, et al.\ (1995) investigated\dots
-\end{quote}
-
-If you wish to load the \verb+natbib+ package with options, you may add the
-following before loading the \verb+neurips_2020+ package:
-\begin{verbatim}
-   \PassOptionsToPackage{options}{natbib}
-\end{verbatim}
-
-If \verb+natbib+ clashes with another package you load, you can add the optional
-argument \verb+nonatbib+ when loading the style file:
-\begin{verbatim}
-   \usepackage[nonatbib]{neurips_2020}
-\end{verbatim}
-
-As submission is double blind, refer to your own published work in the third
-person. That is, use ``In the previous work of Jones et al.\ [4],'' not ``In our
-previous work [4].'' If you cite your other papers that are not widely available
-(e.g., a journal paper under review), use anonymous author names in the
-citation, e.g., an author of the form ``A.\ Anonymous.''
-
-\subsection{Footnotes}
-
-Footnotes should be used sparingly.  If you do require a footnote, indicate
-footnotes with a number\footnote{Sample of the first footnote.} in the
-text. Place the footnotes at the bottom of the page on which they appear.
-Precede the footnote with a horizontal rule of 2~inches (12~picas).
-
-Note that footnotes are properly typeset \emph{after} punctuation
-marks.\footnote{As in this example.}
-
-\subsection{Figures}
-
+\subsection{Q-like-learning}
+\subsubsection{Algorithm}
+Q-learning is a reinforcement learning algorithm aiming at discovering the best action for each given board configuration, which models minesweeper as an MDP. After learning, the algorithm uses the values obtained to play. 
+In 2015, Luis Gardea et al. improved the Q-learning algorithm and applied it to minesweeper. The algorithm is shown in the following column.
+\begin{algorithm}[htb] 
+	\caption{ improved Q-Learning} 
+	\label{alg:Framwork} 
+	\begin{algorithmic}[1]  
+		\State Begin by probing a corner square
+		\label{code:fram:extract} 
+		\While {not game over }
+		\label{code:fram:trainbase} 
+		\State s$\leftarrow$ current state of the board 
+		\State $Array$ $\leftarrow$ all tiles on frontier not mines 
+		\label{code:fram:classify} 
+		\For{tile in $Array$}
+		\State$\hat{P}(s,a)\leftarrow\hat{P}(s,a)+1$
+		\EndFor
+		\EndWhile	
+	\end{algorithmic} 
+\end{algorithm}
+\\In this algorithm, only correct moves are considered. Substituding Q value for a given (state,action) pair, $\hat{P}(s,a)$ resembles the probability that action $a$ will not cause failure. Given $n$ visits to state $s$, the closer $\hat{P}(s,a)$ is to $n$, the less likely the corresponding tile contains mine. This assumes that $s$ is large enough to acquire a proper probability distribution.\\
+Winning rate of this algorithm decreases sharply as the board size increases. For example, when board size extracts from $4\times 4$ to $5\times5$, the state space will increase by a factor $f\sim \frac{10^{25}}{10^{16}}=10^9$. To overcome this drawback, we develop a new algorithm called Q-like-learning to reduce the complexity. The new algorithm is shown below:
+\begin{algorithm}[htb] 
+	\caption{ Q-like-learning} 
+	\label{alg:Framwork} 
+	\begin{algorithmic}[1]
+		\State Begin by probing a corner square
+		\label{code:fram:extract} 
+		\While {not game over }
+		\label{code:fram:trainbase} 
+		\State s$\leftarrow$ current $3\times3$ board of current square and location 
+		\State $Array$ $\leftarrow$ all tiles on frontier not mines 
+		\label{code:fram:classify} 
+		\State$\hat{P}(s,a)\leftarrow\hat{P}(s,a)+1$
+		\State Board.append(s)
+		\EndWhile	
+	\end{algorithmic} 
+\end{algorithm}
+\\After discarding some insufficiently useful information (focusing more on local information), the complexity decreases dramatically. For example, the complexity of original algorithm is $O(10^{n})$, where n denotes the number of tiles in board, but the improved one is only $O(10^{8}n)$.\\
+This reduction of complexity greatly optimizes the original Q-learning method. 
+\subsubsection{Result}
+Theoretically, the Q-like-learning algorithm could perform much better than Q-learning. However, limited by poor hardware conditions, the amount of parameters is still too large for us to get a good experiment result.
+\subsection{Neural network}
+\subsubsection{Algorithm}
+Based on the experience above and knowledge about Neural Network learned in class, we try to apply Back Propagation Neural Network to Minesweeper problem. Considering the global information, we define the input layer as the state of each square (covered or numbered from 0 to 8) along with the radio between numbers of mines and remaining uncovered tiles, such that the size of input layer is $N=\text{number of tiles}*10+1$. Meanwhile, the output layer indicates the probability of each of $m$ squares to be mine. According to Huang et al.(2003), one way to define an optimal size of hidden layer is $\sqrt{(m+2)*N}+2\sqrt{N/(m+2)}$. Since it is a BPNN with only one hidden layer, conventional sigmoid activation function $\sigma(x)=\frac{1}{1-e^x}$ is used.\\
+For initialization, according to Sakesh P., Xavier Glorot normal initialization of weight is suitable for sigmiod activation function. We also choose to initialize the bias to be 0. At each single step of the training game, all weights and bias are updated by gradient descent with the true mine distribution as the true value of output.
+\subsubsection{Result}
+We test BPNN model on different board sizes with 4000 rounds of training, and the output is Figure 1. From the figure we can see that our model trains 4x4 board with 3 mines well. Expanding the training set to 50000 games, the result is obtained in Figure 2. As seen, good convergence can be achieved using BPNN model, and the winning rate successfully reaches a high level around 90$\%$. However, we desire to apply the model to larger sizes of minesweeper game. Based on the concept of convolution, the board is masked by 4x4 squares and the probabilities are calculated by averaging the outputs of each 4x4 square, using BPNN trained 100000 times with random number of mines from 2 to 4. The output of the new algorithm is shown in Table 1. The winning rate has an obvious improvement comparing to directly training corresponding game models (larger than 5x5 hardly has a win if directly trained). Nevertheless, the winning rate is still quite low as size increses, which is considered as the result of underfitting the too large amount of parameters (over $10^{n^2}$ game state cases). Simple BPNN learned in class and insuffient hardware capacity are quite stricted, but we suppose that Convolutional Neural Network can have better performance. Actually, Ryan B. solved this problem by CNN with satisfying winning rate. However, CNN does not perform such well in small scale game model due to overfitting.
 \begin{figure}
-  \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
+	\begin{minipage}[t]{0.5\linewidth}  	
+		\centering  	
+		\includegraphics[height=6cm,width=6cm]{fig_1}
+		\caption{winning rate along with training}  	
+	\end{minipage}%  
+	\hfill  
+	\begin{minipage}[t]{0.5\linewidth}  	
+		\centering  	
+		\includegraphics[height=6cm,width=6cm]{fig_2}  	
+		\caption{winning rate along with traning(for $4\times4$ board and 3 mines}  	
+	\end{minipage}
 \end{figure}
-
-All artwork must be neat, clean, and legible. Lines should be dark enough for
-purposes of reproduction. The figure number and caption always appear after the
-figure. Place one line space before the figure caption and one line space after
-the figure. The figure caption should be lower case (except for first word and
-proper nouns); figures are numbered consecutively.
-
-You may use color figures.  However, it is best for the figure captions and the
-paper body to be legible if the paper is printed in either black/white or in
-color.
-
-\subsection{Tables}
-
-All tables must be centered, neat, clean and legible.  The table number and
-title always appear before the table.  See Table~\ref{sample-table}.
-
-Place one line space before the table title, one line space after the
-table title, and one line space after the table. The table title must
-be lower case (except for first word and proper nouns); tables are
-numbered consecutively.
-
-Note that publication-quality tables \emph{do not contain vertical rules.} We
-strongly suggest the use of the \verb+booktabs+ package, which allows for
-typesetting high-quality, professional tables:
-\begin{center}
-  \url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-This package was used to typeset Table~\ref{sample-table}.
-
 \begin{table}
-  \caption{Sample table title}
-  \label{sample-table}
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    \multicolumn{2}{c}{Part}                   \\
-    \cmidrule(r){1-2}
-    Name     & Description     & Size ($\mu$m) \\
-    \midrule
-    Dendrite & Input terminal  & $\sim$100     \\
-    Axon     & Output terminal & $\sim$10      \\
-    Soma     & Cell body       & up to $10^6$  \\
-    \bottomrule
-  \end{tabular}
+	\caption{average testing winning rates in 1000 rounds}
+	\label{testing winning}
+	\centering
+	\begin{tabular}{cccc}
+		\toprule
+		Game model   & Average winning rate & Game model   & Average winning rate\\
+		\midrule
+		4x4 board, 3 mines & 84.29\%  & 6x6 board, 6 mines  &  4.29\%     \\
+		5x5 board, 3 mines & 57.27\%  & 7x7 board, 8 mines  &  1.07\%    \\
+		5x5 board, 4 mines & 26.50\%  & 8x8 board, 10 mines &  0.35\%    \\
+		\bottomrule
+	\end{tabular}
 \end{table}
 
-\section{Final instructions}
+\section{Conculsions}
+\label{headings}
+In this project, some attemps were made to find a minesweeper solver with machine learning methods which could have a good winning rate with comparatively low complexity. With this belief, three algorithms are used. The first is a naive linear classifier. Due to its robust assumption, it holds a really low complexity but poor performance while training. Secondly, improving traditional Q-learning, Q-like-learning is developed. However, limited by laptop hardware, experiment on model with code cannot be conducted. Finally, we realize a back propagation neural network model and train it on $4\times4$ board. It shows good properties of convergence and acquires a relatively good winning rate around $90\%$. The model can be expanded to convolution neural network by masking the well-trained $4\times 4$ model on larger game sizes and achieve pretty good results.
 
-Do not change any aspects of the formatting parameters in the style files.  In
-particular, do not modify the width or length of the rectangle the text should
-fit into, and do not change font sizes (except perhaps in the
-\textbf{References} section; see below). Please note that pages should be
-numbered.
-
-\section{Preparing PDF files}
-
-Please prepare submission files with paper size ``US Letter,'' and not, for
-example, ``A4.''
-
-Fonts were the main cause of problems in the past years. Your PDF file must only
-contain Type 1 or Embedded TrueType fonts. Here are a few instructions to
-achieve this.
-
-\begin{itemize}
-
-\item You should directly generate PDF files using \verb+pdflatex+.
-
-\item You can check which fonts a PDF files uses.  In Acrobat Reader, select the
-  menu Files$>$Document Properties$>$Fonts and select Show All Fonts. You can
-  also use the program \verb+pdffonts+ which comes with \verb+xpdf+ and is
-  available out-of-the-box on most Linux machines.
-
-\item The IEEE has recommendations for generating PDF files whose fonts are also
-  acceptable for NeurIPS. Please see
-  \url{http://www.emfield.org/icuwb2010/downloads/IEEE-PDF-SpecV32.pdf}
-
-\item \verb+xfig+ "patterned" shapes are implemented with bitmap fonts.  Use
-  "solid" shapes instead.
-
-\item The \verb+\bbold+ package almost always uses bitmap fonts.  You should use
-  the equivalent AMS Fonts:
-\begin{verbatim}
-   \usepackage{amsfonts}
-\end{verbatim}
-followed by, e.g., \verb+\mathbb{R}+, \verb+\mathbb{N}+, or \verb+\mathbb{C}+
-for $\mathbb{R}$, $\mathbb{N}$ or $\mathbb{C}$.  You can also use the following
-workaround for reals, natural and complex:
-\begin{verbatim}
-   \newcommand{\RR}{I\!\!R} %real numbers
-   \newcommand{\Nat}{I\!\!N} %natural numbers
-   \newcommand{\CC}{I\!\!\!\!C} %complex numbers
-\end{verbatim}
-Note that \verb+amsfonts+ is automatically loaded by the \verb+amssymb+ package.
-
-\end{itemize}
-
-If your file contains type 3 fonts or non embedded TrueType fonts, we will ask
-you to fix it.
-
-\subsection{Margins in \LaTeX{}}
-
-Most of the margin problems come from figures positioned by hand using
-\verb+\special+ or other commands. We suggest using the command
-\verb+\includegraphics+ from the \verb+graphicx+ package. Always specify the
-figure width as a multiple of the line width as in the example below:
-\begin{verbatim}
-   \usepackage[pdftex]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]{myfile.pdf}
-\end{verbatim}
-See Section 4.4 in the graphics bundle documentation
-(\url{http://mirrors.ctan.org/macros/latex/required/graphics/grfguide.pdf})
-
-A number of width problems arise when \LaTeX{} cannot properly hyphenate a
-line. Please give LaTeX hyphenation hints using the \verb+\-+ command when
-necessary.
+Our models have great potential to hold much better performance. It can be improved by adjusting parameters to get a better network structure or applying an advanced convolutional neural network model. Also, we could try to implement the Q-like-learning algorithm in a better way on stronger hardwares to verify our theoretical analysis.
 
 
-\section*{Broader Impact}
 
-Authors are required to include a statement of the broader impact of their work, including its ethical aspects and future societal consequences. 
-Authors should discuss both positive and negative outcomes, if any. For instance, authors should discuss a) 
-who may benefit from this research, b) who may be put at disadvantage from this research, c) what are the consequences of failure of the system, and d) whether the task/method leverages
-biases in the data. If authors believe this is not applicable to them, authors can simply state this.
-
-Use unnumbered first level headings for this section, which should go at the end of the paper. {\bf Note that this section does not count towards the eight pages of content that are allowed.}
-
-\begin{ack}
-Use unnumbered first level headings for the acknowledgments. All acknowledgments
-go at the end of the paper before the list of references. Moreover, you are required to declare 
-funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work). 
-More information about this disclosure can be found at: \url{https://neurips.cc/Conferences/2020/PaperInformation/FundingDisclosure}.
-
-
-Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to autmoatically hide this section in the anonymized submission.
-\end{ack}
 
 \section*{References}
 
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-{\bf Note that the Reference section does not count towards the eight pages of content that are allowed.}
+
 \medskip
 
 \small
 
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
+[1] Luis, G\ \& Griffin, K\ (2015) Train a minesweeper solver. CS229.
 
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
+[2] Kanye, R\ (2000) Minesweeper is NP-complete {\it The Mathematical Intelligencer, 22, 9-15.}
 
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
+[3] Project webpage. {\it https://github.com/ryanbaldini/MineSweeperNeuralNet}
 
+[4] Project webpage. {\it https://medium.com/@sakeshpusuluri123/activation-functions-and-weight-initialization-in-deep-learning-ebc326e62a5c}
 \end{document}
